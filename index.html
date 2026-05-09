@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#2563eb" />
+  <meta name="theme-color" content="#2ca25f" />
   <meta name="application-name" content="Mapa Base do Piano" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mapa do Piano" />
@@ -14,46 +14,46 @@
   <title>Mapa Base do Piano e Teclado</title>
   <style>
     :root {
-      --bg: #eef6ff;
-      --bg-2: #f8fbff;
-      --surface: rgba(255, 255, 255, 0.92);
-      --surface-2: rgba(255, 255, 255, 0.78);
+      --bg: #f7fcfd;
+      --bg-2: #e5f5f9;
+      --surface: rgba(255, 255, 255, 0.95);
+      --surface-2: rgba(230, 247, 244, 0.82);
       --ink: #172033;
-      --muted: #5c6880;
-      --line: rgba(23, 32, 51, 0.16);
-      --accent: #2563eb;
-      --accent-2: #14b8a6;
-      --accent-3: #f59e0b;
+      --muted: #4f6570;
+      --line: rgba(38, 87, 78, 0.16);
+      --accent: #2ca25f;
+      --accent-2: #41ae76;
+      --accent-3: #99d8c9;
       --danger: #be123c;
       --note-do: #ef4444;
       --note-re: #f97316;
       --note-mi: #eab308;
       --note-fa: #22c55e;
-      --note-sol: #14b8a6;
+      --note-sol: #0f766e;
       --note-la: #3b82f6;
       --note-si: #8b5cf6;
-      --fn-tonic: #f59e0b;
-      --fn-third: #2563eb;
-      --fn-fifth: #16a34a;
+      --fn-tonic: #2ca25f;
+      --fn-third: #238b45;
+      --fn-fifth: #41ae76;
       --fn-leading: #e11d48;
-      --shadow: 0 18px 48px rgba(23, 32, 51, 0.12);
+      --shadow: 0 18px 48px rgba(19, 75, 58, 0.12);
       --radius: 18px;
       color-scheme: light;
     }
 
     html[data-theme="dark"] {
-      --bg: #101827;
-      --bg-2: #172033;
-      --surface: rgba(27, 39, 61, 0.94);
-      --surface-2: rgba(34, 49, 76, 0.78);
-      --ink: #f3f7ff;
-      --muted: #c4d0e4;
-      --line: rgba(220, 232, 255, 0.2);
-      --accent: #60a5fa;
-      --accent-2: #2dd4bf;
-      --accent-3: #fbbf24;
+      --bg: #0f1f1a;
+      --bg-2: #173329;
+      --surface: rgba(22, 44, 37, 0.95);
+      --surface-2: rgba(31, 63, 53, 0.82);
+      --ink: #effaf6;
+      --muted: #bedaca;
+      --line: rgba(177, 224, 208, 0.2);
+      --accent: #66c2a4;
+      --accent-2: #41ae76;
+      --accent-3: #99d8c9;
       --danger: #fb7185;
-      --shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
       color-scheme: dark;
     }
 
@@ -131,7 +131,7 @@
 
     .button.primary {
       background: var(--accent);
-      color: white;
+      color: #06281a;
       border-color: transparent;
     }
 
@@ -140,7 +140,7 @@
     }
 
     .button:focus-visible, select:focus-visible, input:focus-visible, .key:focus-visible {
-      outline: 3px solid color-mix(in srgb, var(--accent) 42%, transparent);
+      outline: 3px solid color-mix(in srgb, var(--accent) 46%, transparent);
       outline-offset: 2px;
     }
 
@@ -337,7 +337,7 @@
     .key.white {
       flex: 0 0 calc(100% / var(--white-count));
       height: 100%;
-      background: linear-gradient(180deg, #fff, #eef3fb);
+      background: linear-gradient(180deg, #ffffff, #edf8f6);
       border-radius: 0 0 8px 8px;
       z-index: 1;
     }
@@ -347,22 +347,22 @@
       top: 0;
       width: calc(62% / var(--white-count));
       height: 64%;
-      background: linear-gradient(180deg, #162033, #050912);
-      border-color: #050912;
-      color: #f8fbff;
+      background: linear-gradient(180deg, #173529, #07110d);
+      border-color: #07110d;
+      color: #effaf6;
       border-radius: 0 0 7px 7px;
       z-index: 2;
       padding-bottom: 10px;
     }
 
     .key.active {
-      background: linear-gradient(180deg, #dff7f3, #98f0df);
-      box-shadow: inset 0 -8px 0 color-mix(in srgb, var(--accent-2) 55%, transparent);
+      background: linear-gradient(180deg, #e8faf6, #b8ead7);
+      box-shadow: inset 0 -8px 0 color-mix(in srgb, var(--accent-2) 58%, transparent);
     }
 
     .key.black.active {
-      background: linear-gradient(180deg, #2563eb, #173a88);
-      box-shadow: inset 0 -8px 0 rgba(20, 184, 166, 0.7);
+      background: linear-gradient(180deg, #0f5132, #123b2a);
+      box-shadow: inset 0 -8px 0 rgba(153, 216, 201, 0.72);
     }
 
     .key.root {
@@ -510,7 +510,7 @@
     .bar {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
     }
 
     .actions {
