@@ -1,0 +1,1219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="application-name" content="Mapa Base do Piano" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Mapa do Piano" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon.svg" />
+  <title>Mapa Base do Piano e Teclado</title>
+  <style>
+    :root {
+      --bg: #eef6ff;
+      --bg-2: #f8fbff;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-2: rgba(255, 255, 255, 0.78);
+      --ink: #172033;
+      --muted: #5c6880;
+      --line: rgba(23, 32, 51, 0.16);
+      --accent: #2563eb;
+      --accent-2: #14b8a6;
+      --accent-3: #f59e0b;
+      --danger: #be123c;
+      --note-do: #ef4444;
+      --note-re: #f97316;
+      --note-mi: #eab308;
+      --note-fa: #22c55e;
+      --note-sol: #14b8a6;
+      --note-la: #3b82f6;
+      --note-si: #8b5cf6;
+      --fn-tonic: #f59e0b;
+      --fn-third: #2563eb;
+      --fn-fifth: #16a34a;
+      --fn-leading: #e11d48;
+      --shadow: 0 18px 48px rgba(23, 32, 51, 0.12);
+      --radius: 18px;
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #101827;
+      --bg-2: #172033;
+      --surface: rgba(27, 39, 61, 0.94);
+      --surface-2: rgba(34, 49, 76, 0.78);
+      --ink: #f3f7ff;
+      --muted: #c4d0e4;
+      --line: rgba(220, 232, 255, 0.2);
+      --accent: #60a5fa;
+      --accent-2: #2dd4bf;
+      --accent-3: #fbbf24;
+      --danger: #fb7185;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    header, main {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 20px 0 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3vw, 2.45rem);
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      max-width: 720px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    a, button, select, input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .button, .chip, select, input[type="number"] {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 9px 13px;
+      box-shadow: none;
+    }
+
+    .button {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+    }
+
+    .button.primary {
+      background: var(--accent);
+      color: white;
+      border-color: transparent;
+    }
+
+    .button.ghost {
+      background: transparent;
+    }
+
+    .button:focus-visible, select:focus-visible, input:focus-visible, .key:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--accent) 42%, transparent);
+      outline-offset: 2px;
+    }
+
+    main {
+      padding: 12px 0 40px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toolbar, .panel, .practice {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .guide {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .guide h2 {
+      margin: 0;
+      font-size: 1.04rem;
+    }
+
+    .guide-steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .guide-step {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 12px;
+      padding: 11px;
+      min-height: 100px;
+    }
+
+    .guide-step strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .guide-step span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .toolbar {
+      padding: 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      min-width: 0;
+    }
+
+    .field-help {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      border-radius: 10px;
+      padding: 10px 11px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .study-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 1.02rem;
+    }
+
+    .section-note {
+      margin: -4px 0 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 999px;
+      color: var(--muted);
+      padding: 4px 9px;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .keyboard-wrap {
+      overflow: hidden;
+      padding: 8px 2px 4px;
+    }
+
+    .keyboard {
+      --white-count: 22;
+      position: relative;
+      width: 100%;
+      height: clamp(190px, 28vw, 290px);
+      min-width: 0;
+      display: flex;
+      align-items: stretch;
+      isolation: isolate;
+    }
+
+    .key {
+      --note-color: transparent;
+      --function-color: transparent;
+      border: 1px solid #b7c3d8;
+      color: #172033;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 4px;
+      padding: 0 3px 10px;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+      min-width: 0;
+    }
+
+    .key::before,
+    .key::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+      display: none;
+    }
+
+    .key::before {
+      top: 0;
+      height: 9px;
+      background: var(--note-color);
+    }
+
+    .key::after {
+      bottom: 0;
+      height: 10px;
+      background: var(--function-color);
+    }
+
+    .keyboard[data-color-mode="notes"] .key::before,
+    .keyboard[data-color-mode="both"] .key::before,
+    .keyboard[data-color-mode="functions"] .key.function-note::after,
+    .keyboard[data-color-mode="both"] .key.function-note::after {
+      display: block;
+    }
+
+    .key.white {
+      flex: 0 0 calc(100% / var(--white-count));
+      height: 100%;
+      background: linear-gradient(180deg, #fff, #eef3fb);
+      border-radius: 0 0 8px 8px;
+      z-index: 1;
+    }
+
+    .key.black {
+      position: absolute;
+      top: 0;
+      width: calc(62% / var(--white-count));
+      height: 64%;
+      background: linear-gradient(180deg, #162033, #050912);
+      border-color: #050912;
+      color: #f8fbff;
+      border-radius: 0 0 7px 7px;
+      z-index: 2;
+      padding-bottom: 10px;
+    }
+
+    .key.active {
+      background: linear-gradient(180deg, #dff7f3, #98f0df);
+      box-shadow: inset 0 -8px 0 color-mix(in srgb, var(--accent-2) 55%, transparent);
+    }
+
+    .key.black.active {
+      background: linear-gradient(180deg, #2563eb, #173a88);
+      box-shadow: inset 0 -8px 0 rgba(20, 184, 166, 0.7);
+    }
+
+    .key.root {
+      box-shadow: inset 0 -10px 0 var(--accent-3);
+    }
+
+    .keyboard[data-color-mode="functions"] .key.root,
+    .keyboard[data-color-mode="both"] .key.root {
+      box-shadow: inset 0 -10px 0 var(--fn-tonic);
+    }
+
+    .key.selected {
+      transform: translateY(-3px);
+      outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent);
+      outline-offset: 2px;
+    }
+
+    .note-name {
+      font-weight: 800;
+      font-size: clamp(0.62rem, 1.25vw, 0.92rem);
+    }
+
+    .degree {
+      min-height: 18px;
+      font-size: clamp(0.5rem, 1vw, 0.7rem);
+      color: inherit;
+      opacity: 0.82;
+      text-align: center;
+    }
+
+    .finger {
+      min-height: 18px;
+      font-size: clamp(0.48rem, 0.95vw, 0.72rem);
+      opacity: 0.9;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .info-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface-2);
+      padding: 12px;
+      min-height: 86px;
+    }
+
+    .info-card strong {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .big {
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 11px;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--ink);
+      color: var(--bg-2);
+      border-color: transparent;
+    }
+
+    .mode-body {
+      display: none;
+    }
+
+    .mode-body.active {
+      display: grid;
+      gap: 12px;
+    }
+
+    .harmonic-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .roman {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .roman span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .practice {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.6fr);
+      gap: 14px;
+    }
+
+    .task {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 750;
+    }
+
+    .timer {
+      display: grid;
+      gap: 8px;
+    }
+
+    .time {
+      font-size: 2rem;
+      font-weight: 850;
+    }
+
+    .progress {
+      height: 10px;
+      background: var(--surface-2);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .sound-controls {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 14px;
+      padding: 12px;
+      margin: 12px 0 4px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .legend-board {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 14px;
+      padding: 12px;
+      margin: 10px 0 4px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .legend-group {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .legend-title {
+      color: var(--muted);
+      font-weight: 750;
+      margin-right: 3px;
+    }
+
+    .legend-chip {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 5px 9px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.84rem;
+    }
+
+    .legend-swatch {
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      background: var(--swatch);
+      border: 1px solid rgba(23, 32, 51, 0.22);
+      flex: 0 0 auto;
+    }
+
+    .sound-controls label {
+      font-size: 0.82rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .toolbar, .layout, .study-layout, .practice, .guide-steps, .sound-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .keyboard {
+        height: clamp(168px, 42vw, 230px);
+      }
+    }
+
+    @media (max-width: 560px) {
+      header {
+        align-items: flex-start;
+      }
+
+      .info-grid, .harmonic-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand h1 {
+        font-size: 1.55rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>Mapa Base do Piano e Teclado</h1>
+      <p>Mapa visual de teclas, escalas, acordes, leitura e padrões de mão para estudar em blocos curtos.</p>
+    </div>
+    <nav class="nav" aria-label="Navegação">
+      <a class="button ghost" href="relatorio.html">Relatório</a>
+      <button class="button" id="themeBtn" type="button">Modo escuro</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="guide" aria-labelledby="howToUseTitle">
+      <div class="panel-title">
+        <h2 id="howToUseTitle">Como usar o Mapa Base do Piano e Teclado</h2>
+        <span class="tag">guia rápido</span>
+      </div>
+      <div class="guide-steps">
+        <div class="guide-step">
+          <strong>1. Escolha a tonalidade</strong>
+          <span>Defina a nota de partida e veja a escala acender no teclado.</span>
+        </div>
+        <div class="guide-step">
+          <strong>2. Observe as teclas</strong>
+          <span>A tônica marca o ponto de chegada; os graus mostram a função de cada nota.</span>
+        </div>
+        <div class="guide-step">
+          <strong>3. Clique em uma nota</strong>
+          <span>Veja nome, dedo sugerido, mão mais provável e referência de pauta.</span>
+        </div>
+        <div class="guide-step">
+          <strong>4. Pratique em blocos</strong>
+          <span>Use leitura, acordes, campo harmônico e tarefas curtas de 5 ou 10 minutos.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Controles do mapa">
+      <label>
+        Tonalidade
+        <select id="scaleSelect"></select>
+        <span class="field-help">Escolhe a nota principal da escala e dos acordes.</span>
+      </label>
+      <label>
+        Modo
+        <select id="modeSelect">
+          <option value="major">Maior</option>
+          <option value="minor">Menor natural</option>
+        </select>
+        <span class="field-help">Alterna o desenho sonoro entre maior e menor natural.</span>
+      </label>
+      <label>
+        Acorde
+        <select id="chordSelect">
+          <option value="triad">Tríade</option>
+          <option value="seventh">7ª</option>
+          <option value="sus4">Sus4</option>
+          <option value="dim">Diminuto</option>
+        </select>
+        <span class="field-help">Monta blocos de notas para estudar harmonia.</span>
+      </label>
+      <label>
+        Oitavas visíveis
+        <select id="rangeSelect">
+          <option value="2">2 oitavas</option>
+          <option value="3" selected>3 oitavas</option>
+        </select>
+        <span class="field-help">Duas oitavas ampliam as teclas; três mostram mais registro.</span>
+      </label>
+      <label>
+        Mostrar cores
+        <select id="colorModeSelect">
+          <option value="both" selected>Notas + funções</option>
+          <option value="notes">Notas</option>
+          <option value="functions">Funções</option>
+          <option value="none">Sem cores</option>
+        </select>
+        <span class="field-help">Alterna entre nome da nota, função harmônica ou visual limpo.</span>
+      </label>
+    </section>
+
+    <section class="layout">
+      <div class="panel">
+        <div class="panel-title">
+          <h2>Teclado interativo</h2>
+          <span class="tag" id="scaleTag">Dó maior</span>
+        </div>
+        <p class="section-note">As teclas acesas pertencem à escala atual. Clique em uma tecla para investigar sua função musical.</p>
+        <div class="sound-controls" aria-label="Controles de som do teclado">
+          <label>
+            Volume
+            <input id="volumeControl" type="range" min="0" max="100" value="45" />
+          </label>
+          <label>
+            Duração
+            <input id="durationControl" type="range" min="150" max="1800" step="50" value="850" />
+          </label>
+          <label>
+            Timbre
+            <select id="waveformSelect">
+              <option value="triangle" selected>Suave</option>
+              <option value="sine">Redondo</option>
+              <option value="square">Brilhante</option>
+              <option value="sawtooth">Metálico</option>
+            </select>
+          </label>
+        </div>
+        <div class="legend-board" aria-label="Legenda de cores">
+          <div class="legend-group" id="noteLegend">
+            <span class="legend-title">Notas</span>
+          </div>
+          <div class="legend-group" id="functionLegend">
+            <span class="legend-title">Funções</span>
+          </div>
+        </div>
+        <div class="keyboard-wrap">
+          <div class="keyboard" id="keyboard" aria-label="Teclado interativo"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="study-layout">
+      <aside class="panel" aria-live="polite">
+        <div class="panel-title">
+          <h2>Nota selecionada</h2>
+          <span class="tag" id="handTag">mão direita</span>
+        </div>
+        <p class="section-note">Este painel traduz a tecla clicada em informação prática: nome, grau, dedo e região de leitura.</p>
+        <div class="info-grid">
+          <div class="info-card">
+            <strong>Nota</strong>
+            <div class="big" id="noteInfo">C / Dó</div>
+          </div>
+          <div class="info-card">
+            <strong>Grau</strong>
+            <div id="degreeInfo">I - tônica</div>
+          </div>
+          <div class="info-card">
+            <strong>Dedos sugeridos</strong>
+            <div id="fingerInfo">MD 1 | ME 5</div>
+          </div>
+          <div class="info-card">
+            <strong>Pauta</strong>
+            <div id="staffInfo">Clave de sol ou fá, conforme registro.</div>
+          </div>
+        </div>
+        <p class="muted" id="noteHint">Clique em qualquer tecla para ver nome, função, dedo e exemplo musical.</p>
+      </aside>
+
+      <div class="panel">
+        <div class="panel-title">
+          <h2>Modos do mapa</h2>
+          <span class="tag">explorar</span>
+        </div>
+        <p class="section-note">Use cada modo para olhar o mesmo teclado por um ângulo diferente: escala, leitura, acorde ou harmonia.</p>
+        <div class="tabs" role="tablist" aria-label="Modos de estudo">
+          <button class="tab active" type="button" data-tab="keyboardMode">Teclado</button>
+          <button class="tab" type="button" data-tab="readingMode">Leitura</button>
+          <button class="tab" type="button" data-tab="chordMode">Acordes</button>
+          <button class="tab" type="button" data-tab="harmonyMode">Campo harmônico</button>
+        </div>
+
+        <div class="mode-body active" id="keyboardMode">
+          <p class="task" id="scalePattern">Mão direita: 1-2-3-1-2-3-4-5. Mão esquerda: 5-4-3-2-1-3-2-1.</p>
+          <p class="muted">As teclas acesas pertencem à escala. A tônica recebe uma marca mais quente para orientar começo e chegada.</p>
+        </div>
+
+        <div class="mode-body" id="readingMode">
+          <p class="task" id="readingPrompt">Encontre C4 / Dó central no teclado.</p>
+          <div class="actions">
+            <button class="button primary" type="button" id="newReadingBtn">Nova nota</button>
+            <button class="button" type="button" id="showReadingBtn">Mostrar resposta</button>
+          </div>
+        </div>
+
+        <div class="mode-body" id="chordMode">
+          <p class="task" id="chordInfo">Tríade de Dó: C - E - G.</p>
+          <p class="muted">Use acordes como blocos visuais: raiz, terça, quinta e, quando houver, sétima.</p>
+        </div>
+
+        <div class="mode-body" id="harmonyMode">
+          <div class="harmonic-grid" id="harmonyGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="practice">
+      <div>
+        <div class="panel-title">
+          <h2>Prática curta</h2>
+          <span class="tag">modo foco</span>
+        </div>
+        <p class="section-note">Escolha uma tarefa pequena, toque devagar e pare quando o bloco terminar. A meta é consistência, não velocidade.</p>
+        <p class="task" id="practiceTask">Toque a escala selecionada subindo uma vez, bem devagar, dizendo o nome das notas.</p>
+        <div class="actions">
+          <button class="button primary" type="button" id="randomTaskBtn">Gerar tarefa</button>
+          <button class="button" type="button" data-minutes="5">5 min</button>
+          <button class="button" type="button" data-minutes="10">10 min</button>
+          <button class="button" type="button" id="startBtn">Iniciar</button>
+          <button class="button" type="button" id="pauseBtn">Pausar</button>
+          <button class="button" type="button" id="resetBtn">Reiniciar</button>
+        </div>
+      </div>
+      <div class="timer">
+        <span class="muted">Tempo do bloco</span>
+        <span class="time" id="timeDisplay">05:00</span>
+        <div class="progress" aria-hidden="true"><div class="bar" id="timerBar"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const SOLFEGE = {
+      C: 'Dó', 'C#': 'Dó# / Réb', D: 'Ré', 'D#': 'Ré# / Mib', E: 'Mi', F: 'Fá',
+      'F#': 'Fá# / Solb', G: 'Sol', 'G#': 'Sol# / Láb', A: 'Lá', 'A#': 'Lá# / Sib', B: 'Si'
+    };
+    const NATURAL_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    const NOTE_COLORS = {
+      C: 'var(--note-do)',
+      D: 'var(--note-re)',
+      E: 'var(--note-mi)',
+      F: 'var(--note-fa)',
+      G: 'var(--note-sol)',
+      A: 'var(--note-la)',
+      B: 'var(--note-si)'
+    };
+    const FUNCTION_COLORS = {
+      tonic: 'var(--fn-tonic)',
+      third: 'var(--fn-third)',
+      fifth: 'var(--fn-fifth)',
+      leading: 'var(--fn-leading)'
+    };
+    const FUNCTION_LABELS = {
+      tonic: 'Tônica',
+      third: 'Terça',
+      fifth: 'Quinta',
+      leading: 'Sensível'
+    };
+    const DEGREES = [
+      ['I', 'tônica'], ['II', 'supertônica'], ['III', 'mediante'], ['IV', 'subdominante'],
+      ['V', 'dominante'], ['VI', 'submediante'], ['VII', 'sensível/subtônica']
+    ];
+    const MAJOR_STEPS = [0, 2, 4, 5, 7, 9, 11];
+    const MINOR_STEPS = [0, 2, 3, 5, 7, 8, 10];
+    const MAJOR_ROMAN = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'];
+    const MINOR_ROMAN = ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'];
+    const RIGHT_FINGERS = ['1', '2', '3', '1', '2', '3', '4', '5'];
+    const LEFT_FINGERS = ['5', '4', '3', '2', '1', '3', '2', '1'];
+
+    const scaleSelect = document.getElementById('scaleSelect');
+    const modeSelect = document.getElementById('modeSelect');
+    const chordSelect = document.getElementById('chordSelect');
+    const rangeSelect = document.getElementById('rangeSelect');
+    const colorModeSelect = document.getElementById('colorModeSelect');
+    const keyboard = document.getElementById('keyboard');
+    const noteLegend = document.getElementById('noteLegend');
+    const functionLegend = document.getElementById('functionLegend');
+    const scaleTag = document.getElementById('scaleTag');
+    const handTag = document.getElementById('handTag');
+    const noteInfo = document.getElementById('noteInfo');
+    const degreeInfo = document.getElementById('degreeInfo');
+    const fingerInfo = document.getElementById('fingerInfo');
+    const staffInfo = document.getElementById('staffInfo');
+    const noteHint = document.getElementById('noteHint');
+    const scalePattern = document.getElementById('scalePattern');
+    const chordInfo = document.getElementById('chordInfo');
+    const harmonyGrid = document.getElementById('harmonyGrid');
+    const readingPrompt = document.getElementById('readingPrompt');
+    const practiceTask = document.getElementById('practiceTask');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const timerBar = document.getElementById('timerBar');
+    const themeBtn = document.getElementById('themeBtn');
+    const volumeControl = document.getElementById('volumeControl');
+    const durationControl = document.getElementById('durationControl');
+    const waveformSelect = document.getElementById('waveformSelect');
+
+    let selectedMidi = 60;
+    let readingMidi = 60;
+    let totalSeconds = 300;
+    let remainingSeconds = 300;
+    let timerId = null;
+    let audioContext = null;
+
+    NOTE_NAMES.forEach((name) => {
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = `${name} / ${SOLFEGE[name].split(' / ')[0]}`;
+      scaleSelect.appendChild(option);
+    });
+
+    function noteFromMidi(midi) {
+      const name = NOTE_NAMES[midi % 12];
+      const octave = Math.floor(midi / 12) - 1;
+      return { name, octave, label: `${name}${octave}` };
+    }
+
+    function midiToFrequency(midi) {
+      return 440 * (2 ** ((midi - 69) / 12));
+    }
+
+    function getAudioContext() {
+      if (!audioContext) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return null;
+        audioContext = new AudioContext();
+      }
+
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+
+      return audioContext;
+    }
+
+    function playTone(midi) {
+      const context = getAudioContext();
+      if (!context) return;
+
+      const now = context.currentTime;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+
+      const duration = Number(durationControl.value) / 1000;
+      const volume = Number(volumeControl.value) / 100;
+      oscillator.type = waveformSelect.value;
+      oscillator.frequency.setValueAtTime(midiToFrequency(midi), now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(Math.max(volume, 0.001), now + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + duration + 0.05);
+    }
+
+    function getScaleNotes() {
+      const root = NOTE_NAMES.indexOf(scaleSelect.value);
+      const steps = modeSelect.value === 'major' ? MAJOR_STEPS : MINOR_STEPS;
+      return steps.map((step) => (root + step) % 12);
+    }
+
+    function getDegree(noteName) {
+      const noteIndex = NOTE_NAMES.indexOf(noteName);
+      const notes = getScaleNotes();
+      const degreeIndex = notes.indexOf(noteIndex);
+      if (degreeIndex < 0) return null;
+      return { index: degreeIndex, roman: DEGREES[degreeIndex][0], name: DEGREES[degreeIndex][1] };
+    }
+
+    function getNaturalName(noteName) {
+      return noteName.replace('#', '');
+    }
+
+    function getFunctionKey(degreeIndex) {
+      if (degreeIndex === 0) return 'tonic';
+      if (degreeIndex === 2) return 'third';
+      if (degreeIndex === 4) return 'fifth';
+      if (degreeIndex === 6) return 'leading';
+      return '';
+    }
+
+    function fingerForDegree(degreeIndex) {
+      const i = degreeIndex < 0 ? 0 : degreeIndex;
+      return `MD ${RIGHT_FINGERS[i]} | ME ${LEFT_FINGERS[i]}`;
+    }
+
+    function renderKeyboard() {
+      keyboard.innerHTML = '';
+      const octaves = Number(rangeSelect.value);
+      const startMidi = octaves === 2 ? 48 : 36;
+      const endMidi = octaves === 2 ? 72 : 72;
+      let whiteIndex = 0;
+      const whiteCount = Array.from(
+        { length: endMidi - startMidi + 1 },
+        (_, index) => noteFromMidi(startMidi + index).name
+      ).filter((name) => !name.includes('#')).length;
+      const scaleNotes = getScaleNotes();
+      const rootIndex = NOTE_NAMES.indexOf(scaleSelect.value);
+      keyboard.style.setProperty('--white-count', whiteCount);
+      keyboard.dataset.colorMode = colorModeSelect.value;
+
+      for (let midi = startMidi; midi <= endMidi; midi += 1) {
+        const note = noteFromMidi(midi);
+        const isBlack = note.name.includes('#');
+        const degree = getDegree(note.name);
+        const naturalName = getNaturalName(note.name);
+        const functionKey = degree ? getFunctionKey(degree.index) : '';
+        const key = document.createElement('button');
+        key.className = `key ${isBlack ? 'black' : 'white'}`;
+        key.type = 'button';
+        key.dataset.midi = midi;
+        key.style.setProperty('--note-color', NOTE_COLORS[naturalName] || 'transparent');
+        key.style.setProperty('--function-color', FUNCTION_COLORS[functionKey] || 'transparent');
+        key.setAttribute('aria-label', `${note.label} ${SOLFEGE[note.name]}`);
+        key.innerHTML = `<span class="note-name">${note.name}</span><span class="degree">${degree ? degree.roman : ''}</span><span class="finger">${degree ? fingerForDegree(degree.index) : ''}</span>`;
+
+        if (scaleNotes.includes(midi % 12)) key.classList.add('active');
+        if (functionKey) key.classList.add('function-note', `function-${functionKey}`);
+        if ((midi % 12) === rootIndex) key.classList.add('root');
+        if (midi === selectedMidi) key.classList.add('selected');
+
+        key.addEventListener('click', () => selectNote(midi, true));
+
+        if (isBlack) {
+          key.style.left = `${((whiteIndex - 0.31) / whiteCount) * 100}%`;
+          key.style.width = `${(0.62 / whiteCount) * 100}%`;
+        } else {
+          whiteIndex += 1;
+        }
+
+        keyboard.appendChild(key);
+      }
+
+      scaleTag.textContent = `${scaleSelect.value} ${modeSelect.value === 'major' ? 'maior' : 'menor natural'}`;
+    }
+
+    function renderLegend() {
+      const mode = colorModeSelect.value;
+      noteLegend.innerHTML = '<span class="legend-title">Notas</span>';
+      functionLegend.innerHTML = '<span class="legend-title">Funções</span>';
+      noteLegend.hidden = mode === 'functions' || mode === 'none';
+      functionLegend.hidden = mode === 'notes' || mode === 'none';
+
+      NATURAL_NOTES.forEach((note) => {
+        const item = document.createElement('span');
+        item.className = 'legend-chip';
+        item.innerHTML = `<span class="legend-swatch" style="--swatch: ${NOTE_COLORS[note]}"></span>${SOLFEGE[note]}`;
+        noteLegend.appendChild(item);
+      });
+
+      Object.keys(FUNCTION_LABELS).forEach((key) => {
+        const item = document.createElement('span');
+        item.className = 'legend-chip';
+        item.innerHTML = `<span class="legend-swatch" style="--swatch: ${FUNCTION_COLORS[key]}"></span>${FUNCTION_LABELS[key]}`;
+        functionLegend.appendChild(item);
+      });
+
+      if (mode === 'none') {
+        noteLegend.hidden = false;
+        noteLegend.innerHTML = '<span class="legend-title">Cores desativadas</span><span class="legend-chip">Teclado em visual limpo</span>';
+      }
+    }
+
+    function selectNote(midi, shouldPlay = false) {
+      selectedMidi = midi;
+      const note = noteFromMidi(midi);
+      const degree = getDegree(note.name);
+      const hand = midi >= 60 ? 'mão direita' : 'mão esquerda';
+      noteInfo.textContent = `${note.label} / ${SOLFEGE[note.name]}`;
+      degreeInfo.textContent = degree ? `${degree.roman} - ${degree.name}` : 'fora da escala selecionada';
+      fingerInfo.textContent = degree ? fingerForDegree(degree.index) : 'use o dedo mais próximo e mantenha a mão relaxada';
+      staffInfo.textContent = midi >= 60 ? 'Geralmente aparece na clave de sol.' : 'Geralmente aparece na clave de fá.';
+      handTag.textContent = hand;
+      noteHint.textContent = degree
+        ? `Exemplo: use ${note.name} como ${degree.name} em ${scaleSelect.value}.`
+        : 'Nota cromática: útil para passagem, aproximação ou mudança de tonalidade.';
+      renderKeyboard();
+      if (shouldPlay) playTone(midi);
+    }
+
+    function updateScaleText() {
+      const tonic = scaleSelect.value;
+      const modeName = modeSelect.value === 'major' ? 'maior' : 'menor natural';
+      scalePattern.textContent = `${tonic} ${modeName}. Mão direita: 1-2-3-1-2-3-4-5. Mão esquerda: 5-4-3-2-1-3-2-1.`;
+    }
+
+    function renderChord() {
+      const root = NOTE_NAMES.indexOf(scaleSelect.value);
+      const type = chordSelect.value;
+      const intervals = {
+        triad: [0, 4, 7],
+        seventh: [0, 4, 7, 10],
+        sus4: [0, 5, 7],
+        dim: [0, 3, 6]
+      }[type];
+      const names = { triad: 'Tríade', seventh: 'Acorde de 7ª', sus4: 'Suspenso 4', dim: 'Diminuto' };
+      const notes = intervals.map((interval) => NOTE_NAMES[(root + interval) % 12]);
+      chordInfo.textContent = `${names[type]} de ${scaleSelect.value}: ${notes.join(' - ')}.`;
+    }
+
+    function renderHarmony() {
+      const notes = getScaleNotes().map((index) => NOTE_NAMES[index]);
+      const romans = modeSelect.value === 'major' ? MAJOR_ROMAN : MINOR_ROMAN;
+      harmonyGrid.innerHTML = '';
+      notes.forEach((note, index) => {
+        const item = document.createElement('div');
+        item.className = 'roman';
+        item.innerHTML = `<strong>${romans[index]}</strong><span>${note} / ${SOLFEGE[note].split(' / ')[0]}</span>`;
+        harmonyGrid.appendChild(item);
+      });
+    }
+
+    function newReading() {
+      const range = Number(rangeSelect.value) === 2 ? [48, 72] : [36, 72];
+      readingMidi = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
+      const note = noteFromMidi(readingMidi);
+      readingPrompt.textContent = `Encontre ${note.label} / ${SOLFEGE[note.name]} no teclado.`;
+    }
+
+    function showReading() {
+      selectNote(readingMidi, true);
+    }
+
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const sec = (seconds % 60).toString().padStart(2, '0');
+      return `${min}:${sec}`;
+    }
+
+    function setTime(seconds) {
+      totalSeconds = seconds;
+      remainingSeconds = seconds;
+      timeDisplay.textContent = formatTime(seconds);
+      timerBar.style.width = '0%';
+      clearInterval(timerId);
+      timerId = null;
+    }
+
+    function tick() {
+      remainingSeconds -= 1;
+      if (remainingSeconds <= 0) {
+        setTime(totalSeconds);
+        practiceTask.textContent = 'Bloco finalizado. Feche tocando uma vez bem devagar e pare antes de cansar.';
+        return;
+      }
+      timeDisplay.textContent = formatTime(remainingSeconds);
+      timerBar.style.width = `${((totalSeconds - remainingSeconds) / totalSeconds) * 100}%`;
+    }
+
+    const tasks = [
+      'Toque a escala selecionada subindo uma vez, dizendo o nome das notas.',
+      'Toque a tríade da tonalidade: raiz, terça e quinta. Depois volte descendo.',
+      'Encontre todos os Dó visíveis no teclado e toque do grave para o agudo.',
+      'Escolha uma mão. Toque 1-2-3-1-2 devagar, sem acelerar.',
+      'Leia uma nota aleatória e clique na tecla correspondente antes de tocar.',
+      'Toque I, IV e V da tonalidade escolhida, um acorde por respiração.'
+    ];
+
+    function refreshAll() {
+      updateScaleText();
+      renderChord();
+      renderHarmony();
+      renderKeyboard();
+      selectNote(selectedMidi);
+    }
+
+    document.querySelectorAll('.tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((item) => item.classList.remove('active'));
+        document.querySelectorAll('.mode-body').forEach((body) => body.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    scaleSelect.addEventListener('change', refreshAll);
+    modeSelect.addEventListener('change', refreshAll);
+    chordSelect.addEventListener('change', renderChord);
+    rangeSelect.addEventListener('change', refreshAll);
+    colorModeSelect.addEventListener('change', () => {
+      renderKeyboard();
+      renderLegend();
+    });
+    document.getElementById('newReadingBtn').addEventListener('click', newReading);
+    document.getElementById('showReadingBtn').addEventListener('click', showReading);
+    document.getElementById('randomTaskBtn').addEventListener('click', () => {
+      practiceTask.textContent = tasks[Math.floor(Math.random() * tasks.length)];
+    });
+    document.querySelectorAll('[data-minutes]').forEach((button) => {
+      button.addEventListener('click', () => setTime(Number(button.dataset.minutes) * 60));
+    });
+    document.getElementById('startBtn').addEventListener('click', () => {
+      if (!timerId) timerId = setInterval(tick, 1000);
+    });
+    document.getElementById('pauseBtn').addEventListener('click', () => {
+      clearInterval(timerId);
+      timerId = null;
+    });
+    document.getElementById('resetBtn').addEventListener('click', () => setTime(totalSeconds));
+    themeBtn.addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('piano-theme', next);
+      themeBtn.textContent = next === 'dark' ? 'Modo claro' : 'Modo escuro';
+    });
+
+    document.documentElement.dataset.theme = localStorage.getItem('piano-theme') || 'light';
+    themeBtn.textContent = document.documentElement.dataset.theme === 'dark' ? 'Modo claro' : 'Modo escuro';
+    renderLegend();
+    refreshAll();
+    newReading();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+      });
+    }
+  </script>
+</body>
+</html>

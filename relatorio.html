@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="application-name" content="Mapa Base do Piano" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <title>Relatório do Mapa Base do Piano e Teclado</title>
+  <style>
+    :root {
+      --bg: #eef6ff;
+      --bg-2: #f8fbff;
+      --surface: rgba(255, 255, 255, 0.94);
+      --surface-2: rgba(255, 255, 255, 0.72);
+      --surface-3: rgba(255, 255, 255, 0.62);
+      --ink: #172033;
+      --muted: #5c6880;
+      --line: rgba(23, 32, 51, 0.16);
+      --accent: #2563eb;
+      --shadow: 0 18px 48px rgba(23, 32, 51, 0.12);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #101827;
+      --bg-2: #172033;
+      --surface: rgba(27, 39, 61, 0.94);
+      --surface-2: rgba(34, 49, 76, 0.78);
+      --surface-3: rgba(34, 49, 76, 0.62);
+      --ink: #f3f7ff;
+      --muted: #c4d0e4;
+      --line: rgba(220, 232, 255, 0.2);
+      --accent: #60a5fa;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--bg), var(--bg-2));
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    header, main {
+      width: min(960px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 22px 0 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 3vw, 2.3rem);
+    }
+
+    p { color: var(--muted); }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .button {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 9px 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      cursor: pointer;
+    }
+
+    main {
+      padding: 10px 0 40px;
+      display: grid;
+      gap: 14px;
+    }
+
+    section {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 22px;
+    }
+
+    li + li { margin-top: 6px; }
+
+    .tag {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 9px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      border-color: transparent;
+      color: #ffffff;
+    }
+
+    .tab-panel {
+      display: none;
+      border: 1px solid var(--line);
+      background: var(--surface-3);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 10px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .tab-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.04rem;
+    }
+
+    .tab-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--surface-2);
+    }
+
+    .mini-card strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .subtabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .subtab {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--ink);
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .subtab.active {
+      background: rgba(37, 99, 235, 0.12);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .staff-detail {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 12px;
+      min-height: 150px;
+    }
+
+    .staff-detail h4 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .staff-detail p {
+      margin: 0 0 10px;
+    }
+
+    .staff-detail ul {
+      margin-top: 8px;
+    }
+
+    .sound-controls {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 14px;
+      padding: 12px;
+      margin: 12px 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .sound-controls label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .sound-controls select {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 10px;
+      padding: 9px 10px;
+      font: inherit;
+      width: 100%;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .staff-demo {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 14px;
+      margin-top: 14px;
+      align-items: start;
+    }
+
+    .demo-keyboard {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .demo-key {
+      min-height: 118px;
+      border: 1px solid #b7c3d8;
+      border-radius: 0 0 9px 9px;
+      background: linear-gradient(180deg, #ffffff, #eef3fb);
+      color: #172033;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      padding: 8px 4px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .demo-key.active {
+      background: linear-gradient(180deg, #dbeafe, #bfdbfe);
+      border-color: var(--accent);
+      box-shadow: inset 0 -8px 0 rgba(37, 99, 235, 0.34);
+    }
+
+    html[data-theme="dark"] .demo-key {
+      background: linear-gradient(180deg, #f8fbff, #dce8ff);
+      color: #172033;
+    }
+
+    html[data-theme="dark"] .demo-key.active {
+      background: linear-gradient(180deg, #bfdbfe, #93c5fd);
+    }
+
+    .score-board {
+      display: grid;
+      gap: 10px;
+    }
+
+    .score-card {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 14px;
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .score-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .score {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .staff-line {
+      stroke: var(--ink);
+      stroke-width: 1.5;
+      opacity: 0.82;
+    }
+
+    .ledger-line {
+      stroke: var(--ink);
+      stroke-width: 1.5;
+      opacity: 0.55;
+    }
+
+    .note-dot {
+      fill: var(--accent);
+      stroke: var(--ink);
+      stroke-width: 2;
+    }
+
+    .note-label {
+      fill: var(--ink);
+      font: 700 14px Inter, system-ui, sans-serif;
+    }
+
+    .clef-label {
+      fill: var(--ink);
+      font: 800 18px Inter, system-ui, sans-serif;
+    }
+
+    @media (max-width: 720px) {
+      .tab-grid, .subtabs, .staff-demo, .sound-controls { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Relatório do Mapa Base do Piano e Teclado</h1>
+      <p>Versão irmã do mapa do trombone, adaptada para teclado visual, leitura e padrões de mão.</p>
+    </div>
+    <nav class="nav" aria-label="Navegação">
+      <a class="button" href="index.html">Abrir mapa</a>
+      <button class="button" id="themeBtn" type="button">Modo escuro</button>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <span class="tag">ideia central</span>
+      <h2>Mapa visual de teclas</h2>
+      <p>
+        No piano, a referência principal não é uma posição de vara, mas a relação entre tecla, nota, grau da escala,
+        dedo e mão. Por isso a tela principal usa um teclado interativo de duas ou três oitavas.
+      </p>
+      <p>
+        O fluxo de uso é simples: escolher uma tonalidade, observar quais teclas pertencem à escala, clicar em uma nota
+        para entender sua função e fechar com uma prática curta de leitura, acorde ou campo harmônico.
+      </p>
+      <p>
+        Abaixo, cada parte da apresentação fica em uma aba própria. Clique em uma aba para ver apenas aquele assunto.
+      </p>
+
+      <div class="tabs" role="tablist" aria-label="Apresentação do produto">
+        <button class="tab active" type="button" role="tab" aria-selected="true" aria-controls="contentTab" data-tab="contentTab">Conteúdos do mapa</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="flowTab" data-tab="flowTab">Fluxo de estudo</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="modesTab" data-tab="modesTab">Modos do app</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="staffTab" data-tab="staffTab">Pauta desenhada</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="levelsTab" data-tab="levelsTab">Exercícios por nível</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="audioTab" data-tab="audioTab">Áudio das notas</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="dataTab" data-tab="dataTab">Dados em JSON</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="colorTab" data-tab="colorTab">Cores e legenda</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pwaTab" data-tab="pwaTab">PWA e acesso</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="roadmapTab" data-tab="roadmapTab">Próximos passos</button>
+      </div>
+
+      <div class="tab-panel active" id="contentTab" role="tabpanel">
+        <h3>Conteúdos do mapa</h3>
+        <p>
+          Esta aba resume o que o mapa apresenta diretamente no produto, sempre conectado ao teclado visual.
+        </p>
+        <div class="tab-grid">
+          <div class="mini-card">
+            <strong>Notas no teclado</strong>
+            <span>Nome internacional e solfejo aparecem juntos para ligar C, D, E a Dó, Ré, Mi.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Escalas</strong>
+            <span>Escalas maiores e menores naturais acendem as teclas correspondentes.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Dedilhado</strong>
+            <span>Sugestões para mão direita e esquerda ajudam a praticar com menos dúvida.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Harmonia</strong>
+            <span>Acordes básicos e campo harmônico mostram tríades, sétimas e graus romanos.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Som integrado</strong>
+            <span>Cada tecla pode soar com Web Audio, controle de volume, duração e timbre.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Cores de apoio</strong>
+            <span>A legenda separa notas naturais e funções como tônica, terça, quinta e sensível.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="flowTab" role="tabpanel">
+        <h3>Fluxo de estudo</h3>
+        <p>
+          O fluxo foi pensado para reduzir atrito: escolher uma referência, tocar pouco, receber uma tarefa clara e encerrar
+          antes de cansar.
+        </p>
+        <div class="tab-grid">
+          <div class="mini-card">
+            <strong>Escolher tonalidade</strong>
+            <span>O estudante escolhe uma escala e vê imediatamente as teclas acesas.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Tarefa pequena</strong>
+            <span>O app sugere ações curtas, como tocar uma escala ou uma tríade.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Blocos curtos</strong>
+            <span>Sessões de 5 ou 10 minutos ajudam a manter foco e repetição.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Menos distração</strong>
+            <span>O conteúdo fica dividido em modos para evitar excesso de texto durante a prática.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Reforço visual</strong>
+            <span>Cores, pauta e teclado ajudam a fixar a mesma informação por caminhos diferentes.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Repetição leve</strong>
+            <span>O objetivo é repetir pouco, com clareza, em vez de estudar muito tempo sem direção.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="modesTab" role="tabpanel">
+        <h3>Modos do app</h3>
+        <p>
+          Os modos são diferentes formas de olhar para o mesmo teclado: nota, leitura, acorde e função harmônica.
+        </p>
+        <div class="tab-grid">
+          <div class="mini-card">
+            <strong>Teclado</strong>
+            <span>Mostra a escala selecionada, a tônica, o grau e os dedos sugeridos.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Leitura</strong>
+            <span>Gera uma nota aleatória para o estudante encontrar no teclado.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Acordes</strong>
+            <span>Mostra as notas do acorde escolhido, como tríade, 7ª, sus4 ou diminuto.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Campo harmônico</strong>
+            <span>Exibe I, ii, iii, IV, V, vi e vii° dentro da tonalidade escolhida.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Prática curta</strong>
+            <span>Gera tarefas rápidas e usa timer para organizar blocos de estudo.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Nota selecionada</strong>
+            <span>Mostra nome, grau, dedo sugerido e referência de pauta da tecla clicada.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="staffTab" role="tabpanel">
+        <h3>Pauta desenhada</h3>
+        <p>
+          Este módulo conecta o teclado à leitura tradicional. A ideia é mostrar onde a tecla selecionada aparece na pauta,
+          tanto na clave de sol quanto na clave de fá.
+        </p>
+
+        <div class="subtabs" role="tablist" aria-label="Detalhes da pauta desenhada">
+          <button class="subtab active" type="button" aria-selected="true" data-staff-detail="treble">Clave de sol</button>
+          <button class="subtab" type="button" aria-selected="false" data-staff-detail="bass">Clave de fá</button>
+          <button class="subtab" type="button" aria-selected="false" data-staff-detail="highlight">Nota destacada</button>
+          <button class="subtab" type="button" aria-selected="false" data-staff-detail="activeReading">Leitura ativa</button>
+        </div>
+
+        <div class="staff-demo">
+          <div>
+            <h4>Teclado de exemplo</h4>
+            <p>Escolha uma tecla para ouvir a nota e vê-la marcada nas duas pautas.</p>
+            <div class="sound-controls" aria-label="Controles de som do exemplo de pauta">
+              <label>
+                Volume
+                <input id="staffVolumeControl" type="range" min="0" max="100" value="45" />
+              </label>
+              <label>
+                Duração
+                <input id="staffDurationControl" type="range" min="150" max="1800" step="50" value="850" />
+              </label>
+              <label>
+                Timbre
+                <select id="staffWaveformSelect">
+                  <option value="triangle" selected>Suave</option>
+                  <option value="sine">Redondo</option>
+                  <option value="square">Brilhante</option>
+                  <option value="sawtooth">Metálico</option>
+                </select>
+              </label>
+            </div>
+            <div class="demo-keyboard" aria-label="Teclado de exemplo para leitura na pauta">
+              <button class="demo-key active" type="button" data-demo-note="C4">C4<br>Dó</button>
+              <button class="demo-key" type="button" data-demo-note="D4">D4<br>Ré</button>
+              <button class="demo-key" type="button" data-demo-note="E4">E4<br>Mi</button>
+              <button class="demo-key" type="button" data-demo-note="F4">F4<br>Fá</button>
+              <button class="demo-key" type="button" data-demo-note="G4">G4<br>Sol</button>
+              <button class="demo-key" type="button" data-demo-note="A4">A4<br>Lá</button>
+              <button class="demo-key" type="button" data-demo-note="B4">B4<br>Si</button>
+              <button class="demo-key" type="button" data-demo-note="C5">C5<br>Dó</button>
+            </div>
+          </div>
+
+          <div class="score-board">
+            <div class="score-card">
+              <strong>Partitura em clave de sol</strong>
+              <svg class="score" viewBox="0 0 520 150" role="img" aria-label="Pauta em clave de sol com nota selecionada">
+                <text class="clef-label" x="18" y="52">Clave de sol</text>
+                <line class="staff-line" x1="130" y1="34" x2="492" y2="34"/>
+                <line class="staff-line" x1="130" y1="52" x2="492" y2="52"/>
+                <line class="staff-line" x1="130" y1="70" x2="492" y2="70"/>
+                <line class="staff-line" x1="130" y1="88" x2="492" y2="88"/>
+                <line class="staff-line" x1="130" y1="106" x2="492" y2="106"/>
+                <line class="ledger-line" id="trebleLedger" x1="238" y1="124" x2="298" y2="124"/>
+                <ellipse class="note-dot" id="trebleNote" cx="268" cy="124" rx="13" ry="10" transform="rotate(-18 268 124)"/>
+                <text class="note-label" id="trebleLabel" x="315" y="128">C4 / Dó central</text>
+              </svg>
+            </div>
+
+            <div class="score-card">
+              <strong>Partitura em clave de fá</strong>
+              <svg class="score" viewBox="0 0 520 150" role="img" aria-label="Pauta em clave de fá com nota selecionada">
+                <text class="clef-label" x="18" y="52">Clave de fá</text>
+                <line class="staff-line" x1="130" y1="34" x2="492" y2="34"/>
+                <line class="staff-line" x1="130" y1="52" x2="492" y2="52"/>
+                <line class="staff-line" x1="130" y1="70" x2="492" y2="70"/>
+                <line class="staff-line" x1="130" y1="88" x2="492" y2="88"/>
+                <line class="staff-line" x1="130" y1="106" x2="492" y2="106"/>
+                <line class="ledger-line" id="bassLedger" x1="238" y1="16" x2="298" y2="16"/>
+                <ellipse class="note-dot" id="bassNote" cx="268" cy="16" rx="13" ry="10" transform="rotate(-18 268 16)"/>
+                <text class="note-label" id="bassLabel" x="315" y="22">C4 / Dó central</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="staff-detail" id="staffDetail" aria-live="polite">
+          <h4>Clave de sol</h4>
+          <p>Mostra notas médias e agudas, geralmente associadas à mão direita.</p>
+          <ul>
+            <li>Ajuda a ligar a tecla tocada com a leitura acima do Dó central.</li>
+            <li>Serve para melodias, escalas na mão direita e leitura inicial no registro médio.</li>
+            <li>Permite destacar a nota na pauta enquanto a tecla correspondente aparece no teclado.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="levelsTab" role="tabpanel">
+        <h3>Exercícios por nível</h3>
+        <p>
+          Este módulo organiza a prática em trilhas graduais, mantendo tarefas pequenas e blocos curtos para facilitar
+          continuidade.
+        </p>
+        <div class="tab-grid">
+          <div class="mini-card">
+            <strong>Iniciante</strong>
+            <span>Encontrar notas, tocar cinco dedos, reconhecer Dó central e tríades simples.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Intermediário</strong>
+            <span>Escalas maiores e menores, inversões simples, I-IV-V e leitura com saltos curtos.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Leitura rápida</strong>
+            <span>Reconhecer notas aleatórias, responder no teclado e alternar clave de sol/fá.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Blocos curtos</strong>
+            <span>Séries de 3, 5 ou 10 minutos para manter foco e sensação de progresso.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="audioTab" role="tabpanel">
+        <h3>Áudio das notas</h3>
+        <p>
+          Este módulo usaria Web Audio para ligar tecla, nome, altura e memória auditiva, sem depender de arquivos externos.
+        </p>
+        <div class="tab-grid">
+          <div class="mini-card">
+            <strong>Nota clicada</strong>
+            <span>Ao tocar em uma tecla, o app reproduz a frequência correspondente.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Escala guiada</strong>
+            <span>O app pode tocar a escala selecionada lentamente, nota por nota.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Treino auditivo</strong>
+            <span>Ouvir uma nota e tentar encontrar a tecla antes de mostrar a resposta.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Controle simples</strong>
+            <span>Volume, repetição e botão para silenciar quando o estudo precisar ser visual.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="dataTab" role="tabpanel">
+        <h3>Dados em JSON</h3>
+        <p>
+          Este módulo separaria escalas, acordes, dedilhados, textos e exercícios em dados editáveis, facilitando manutenção
+          e versões para outros instrumentos.
+        </p>
+        <div class="tab-grid">
+          <div class="mini-card">
+            <strong>Escalas</strong>
+            <span>Notas, graus, dedilhados e nomes podem morar em arquivos de dados.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Exercícios</strong>
+            <span>Tarefas por nível podem ser adicionadas como listas editáveis.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Instrumentos</strong>
+            <span>O mesmo motor visual poderia carregar piano, trombone ou outro mapa.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Manutenção</strong>
+            <span>Corrigir uma escala ou adicionar conteúdo ficaria mais rápido e menos arriscado.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="colorTab" role="tabpanel">
+        <h3>Cores e legenda</h3>
+        <p>
+          As cores foram pensadas como apoio de memorização. O estudante pode estudar por nome da nota, por função harmônica,
+          combinando as duas camadas ou desligando as cores quando quiser uma leitura mais limpa.
+        </p>
+        <div class="tab-grid">
+          <div class="mini-card">
+            <strong>Notas naturais</strong>
+            <span>Dó, Ré, Mi, Fá, Sol, Lá e Si recebem cores próprias para localização rápida no teclado.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Funções importantes</strong>
+            <span>Tônica, terça, quinta e sensível recebem destaque porque estruturam escala, acorde e resolução.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Modos de visualização</strong>
+            <span>O seletor permite alternar entre notas, funções, ambas as camadas ou teclado sem cores.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Uso pedagógico</strong>
+            <span>No começo, cores ajudam a fixar padrões; depois, podem ser reduzidas para treinar autonomia.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="pwaTab" role="tabpanel">
+        <h3>PWA e acesso</h3>
+        <p>
+          O mapa foi estruturado como PWA para abrir rápido, funcionar offline depois do primeiro acesso e ficar disponível
+          na tela inicial do celular.
+        </p>
+        <div class="tab-grid">
+          <div class="mini-card">
+            <strong>Instalação</strong>
+            <span>O navegador pode oferecer “Adicionar à tela inicial” ou “Instalar app”.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Uso offline</strong>
+            <span>Service worker e manifesto mantêm os arquivos principais disponíveis sem internet.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Tema persistente</strong>
+            <span>Modo claro e escuro ficam salvos no navegador e valem para mapa e relatório.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Sem dependências pesadas</strong>
+            <span>Som, visual e interação usam recursos nativos do navegador.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="roadmapTab" role="tabpanel">
+        <h3>Próximos passos</h3>
+        <p>
+          A base já permite estudar visualmente e com som. As próximas melhorias podem transformar o app em uma trilha de estudo
+          mais completa.
+        </p>
+        <div class="tab-grid">
+          <div class="mini-card">
+            <strong>Salvar preferências</strong>
+            <span>Guardar volume, duração, timbre e modo de cores para restaurar ao abrir o app.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Exercícios avaliativos</strong>
+            <span>Contar acertos em leitura, reconhecimento auditivo e formação de acordes.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Mais escalas</strong>
+            <span>Adicionar menor harmônica, menor melódica, pentatônicas e modos gregos.</span>
+          </div>
+          <div class="mini-card">
+            <strong>Separar dados</strong>
+            <span>Mover conteúdo musical para JSON e reaproveitar o motor em novos instrumentos.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.tab-panel');
+    const themeBtn = document.getElementById('themeBtn');
+    const staffVolumeControl = document.getElementById('staffVolumeControl');
+    const staffDurationControl = document.getElementById('staffDurationControl');
+    const staffWaveformSelect = document.getElementById('staffWaveformSelect');
+    let audioContext = null;
+    const demoNotes = {
+      C4: { label: 'C4 / Dó central', frequency: 261.63, trebleY: 124, bassY: 16, ledgerTreble: true, ledgerBass: true },
+      D4: { label: 'D4 / Ré', frequency: 293.66, trebleY: 115, bassY: 25, ledgerTreble: false, ledgerBass: false },
+      E4: { label: 'E4 / Mi', frequency: 329.63, trebleY: 106, bassY: 34, ledgerTreble: false, ledgerBass: false },
+      F4: { label: 'F4 / Fá', frequency: 349.23, trebleY: 97, bassY: 43, ledgerTreble: false, ledgerBass: false },
+      G4: { label: 'G4 / Sol', frequency: 392.00, trebleY: 88, bassY: 52, ledgerTreble: false, ledgerBass: false },
+      A4: { label: 'A4 / Lá', frequency: 440.00, trebleY: 79, bassY: 61, ledgerTreble: false, ledgerBass: false },
+      B4: { label: 'B4 / Si', frequency: 493.88, trebleY: 70, bassY: 70, ledgerTreble: false, ledgerBass: false },
+      C5: { label: 'C5 / Dó', frequency: 523.25, trebleY: 61, bassY: 79, ledgerTreble: false, ledgerBass: false }
+    };
+    const staffDetails = {
+      treble: {
+        title: 'Clave de sol',
+        text: 'Mostra notas médias e agudas, geralmente associadas à mão direita.',
+        items: [
+          'Ajuda a ligar a tecla tocada com a leitura acima do Dó central.',
+          'Serve para melodias, escalas na mão direita e leitura inicial no registro médio.',
+          'Permite destacar a nota na pauta enquanto a tecla correspondente aparece no teclado.'
+        ]
+      },
+      bass: {
+        title: 'Clave de fá',
+        text: 'Mostra notas graves, geralmente associadas à mão esquerda.',
+        items: [
+          'Ajuda a localizar baixos, fundamentais de acordes e padrões da mão esquerda.',
+          'Cria ponte entre região grave do teclado e leitura abaixo do Dó central.',
+          'Pode mostrar a mesma nota em outra oitava para comparar registros.'
+        ]
+      },
+      highlight: {
+        title: 'Nota destacada',
+        text: 'A nota clicada no teclado aparece marcada visualmente na pauta.',
+        items: [
+          'A tecla selecionada ganha correspondência imediata na pauta.',
+          'A marca visual reduz a dúvida entre nome, tecla e posição escrita.',
+          'Pode mostrar nome da nota, oitava e grau da escala no mesmo painel.'
+        ]
+      },
+      activeReading: {
+        title: 'Leitura ativa',
+        text: 'O app mostra uma nota na pauta e pede a tecla correspondente.',
+        items: [
+          'Transforma leitura em exercício de resposta curta.',
+          'Permite alternar clave de sol e clave de fá em blocos pequenos.',
+          'Ajuda a treinar reconhecimento sem depender só de memorização visual do teclado.'
+        ]
+      }
+    };
+
+    function activateTab(tab) {
+      const panel = document.getElementById(tab.dataset.tab);
+      if (!panel) return;
+
+      tabs.forEach((item) => {
+        item.classList.remove('active');
+        item.setAttribute('aria-selected', 'false');
+      });
+      panels.forEach((item) => {
+        item.classList.remove('active');
+        item.setAttribute('hidden', '');
+      });
+
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      panel.classList.add('active');
+      panel.removeAttribute('hidden');
+    }
+
+    function activateStaffDetail(button) {
+      const detail = staffDetails[button.dataset.staffDetail];
+      const detailBox = document.getElementById('staffDetail');
+      if (!detail || !detailBox) return;
+
+      document.querySelectorAll('[data-staff-detail]').forEach((item) => {
+        item.classList.remove('active');
+        item.setAttribute('aria-selected', 'false');
+      });
+
+      button.classList.add('active');
+      button.setAttribute('aria-selected', 'true');
+      detailBox.innerHTML = `
+        <h4>${detail.title}</h4>
+        <p>${detail.text}</p>
+        <ul>${detail.items.map((item) => `<li>${item}</li>`).join('')}</ul>
+      `;
+    }
+
+    function getAudioContext() {
+      if (!audioContext) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return null;
+        audioContext = new AudioContext();
+      }
+
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+
+      return audioContext;
+    }
+
+    function playTone(frequency) {
+      const context = getAudioContext();
+      if (!context) return;
+
+      const now = context.currentTime;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+
+      const duration = Number(staffDurationControl.value) / 1000;
+      const volume = Number(staffVolumeControl.value) / 100;
+      oscillator.type = staffWaveformSelect.value;
+      oscillator.frequency.setValueAtTime(frequency, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(Math.max(volume, 0.001), now + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + duration + 0.05);
+    }
+
+    function selectDemoNote(button) {
+      const note = demoNotes[button.dataset.demoNote];
+      if (!note) return;
+
+      document.querySelectorAll('[data-demo-note]').forEach((item) => item.classList.remove('active'));
+      button.classList.add('active');
+
+      const trebleNote = document.getElementById('trebleNote');
+      const bassNote = document.getElementById('bassNote');
+      const trebleLabel = document.getElementById('trebleLabel');
+      const bassLabel = document.getElementById('bassLabel');
+      const trebleLedger = document.getElementById('trebleLedger');
+      const bassLedger = document.getElementById('bassLedger');
+
+      trebleNote.setAttribute('cy', note.trebleY);
+      trebleNote.setAttribute('transform', `rotate(-18 268 ${note.trebleY})`);
+      bassNote.setAttribute('cy', note.bassY);
+      bassNote.setAttribute('transform', `rotate(-18 268 ${note.bassY})`);
+      trebleLabel.textContent = note.label;
+      bassLabel.textContent = note.label;
+      trebleLabel.setAttribute('y', note.trebleY + 4);
+      bassLabel.setAttribute('y', note.bassY + 4);
+      trebleLedger.style.display = note.ledgerTreble ? 'block' : 'none';
+      bassLedger.style.display = note.ledgerBass ? 'block' : 'none';
+      playTone(note.frequency);
+    }
+
+    panels.forEach((panel) => {
+      if (!panel.classList.contains('active')) {
+        panel.setAttribute('hidden', '');
+      }
+    });
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        activateTab(tab);
+      });
+    });
+
+    document.querySelectorAll('[data-staff-detail]').forEach((button) => {
+      button.addEventListener('click', () => {
+        activateStaffDetail(button);
+      });
+    });
+
+    document.querySelectorAll('[data-demo-note]').forEach((button) => {
+      button.addEventListener('click', () => {
+        selectDemoNote(button);
+      });
+    });
+
+    document.documentElement.dataset.theme = localStorage.getItem('piano-theme') || 'light';
+    themeBtn.textContent = document.documentElement.dataset.theme === 'dark' ? 'Modo claro' : 'Modo escuro';
+    themeBtn.addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('piano-theme', next);
+      themeBtn.textContent = next === 'dark' ? 'Modo claro' : 'Modo escuro';
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+      });
+    }
+  </script>
+</body>
+</html>

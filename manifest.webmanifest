@@ -1,0 +1,19 @@
+{
+  "name": "Mapa Base do Piano e Teclado",
+  "short_name": "Piano",
+  "description": "Mapa visual de piano e teclado com escalas, acordes, leitura e treino offline.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef6ff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
