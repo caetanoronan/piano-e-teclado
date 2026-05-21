@@ -1,8 +1,10 @@
 # Mapa Base do Piano e Teclado
 
-Aplicativo educativo em HTML, CSS e JavaScript puro para estudar piano/teclado com teclado visual, leitura, escalas, acordes, campo harmonico, som sintetizado e funcionamento offline como PWA.
+Aplicativo educativo em HTML, CSS e JavaScript puro para estudar piano e teclado com visual atualizado, teclado interativo, leitura, escalas, acordes, campo harmonico, som sintetizado e funcionamento offline como PWA.
 
 O projeto nasceu como uma adaptacao do fluxo pedagogico usado no mapa do trombone de vara, mas foi redesenhado para a logica do piano: tecla, nota, grau da escala, dedilhado, leitura e funcao harmonica.
+
+O visual atual segue a mesma identidade do guia de layout do hub musical: fundo suave com elementos decorativos, blocos em gradiente, cards organizados e foco em leitura clara tanto no `index.html` quanto no `relatorio.html`.
 
 ## O Que O App Faz
 
@@ -18,7 +20,56 @@ O projeto nasceu como uma adaptacao do fluxo pedagogico usado no mapa do trombon
 - Inclui modos de estudo: teclado, leitura, acordes e campo harmonico.
 - Inclui pratica curta com timer e tarefas rapidas.
 - Funciona como PWA: instalavel e com cache offline.
-- Inclui relatorio interativo com abas e demonstracao de pauta.
+- Inclui relatorio interativo com abas, pauta desenhada e blocos explicativos.
+
+## Identidade Visual
+
+O layout foi ajustado para ficar mais próximo do padrao visual do hub musical.
+
+### Principios
+
+- fundo com gradientes suaves e camada decorativa musical;
+- blocos com bordas arredondadas e sombra leve;
+- destaque visual em titulo, tag e seções principais;
+- leitura limpa no desktop e no celular;
+- reducao de movimento respeitada quando o sistema pedir.
+
+### O Que Foi Alinhado
+
+- pagina principal com cabecalho mais integrado ao conjunto;
+- relatorio com a mesma linguagem visual da pagina principal;
+- responsividade reforcada para tela estreita;
+- tema claro e escuro com a mesma paleta base do projeto.
+
+## Elementos Musicais no Layout
+
+Esta seção descreve como representar visualmente elementos musicais no layout sem alterar a estrutura funcional do app. Siga estas recomendações para manter consistência visual, acessibilidade e compatibilidade com o `GUIA_LAYOUT.md` do hub.
+
+1. Notas e oitavas:
+    - Use classes e atributos semânticos (por exemplo, `data-note`, `data-octave`) nas teclas e nos pontos de partitura para facilitar estilização e leitura por scripts.
+    - Mostre nome internacional e solfejo juntos quando houver espaço; ex.: `C4 / Dó`.
+    - Ao colorir por nota, mantenha uma paleta consistente (Dó, Ré, Mi, Fá, Sol, Lá, Si) e documente as cores no `relatorio.html` e na legenda.
+
+2. Claves e pauta:
+    - Renderize pautas como SVG (`.score`) para manter nitidez em qualquer tela.
+    - Use elementos com classes como `.clef-label`, `.staff-line`, `.note-dot` para permitir estilização independente.
+    - Mantenha as claves decorativas em pseudo-elementos ou SVGs separados para não interferir no fluxo do conteúdo.
+
+3. Tempo, compasso e pulsação:
+    - Exiba marcações de andamento e compasso como texto curto (ex.: `♩ = 80`, `4/4`) dentro de elementos com `aria-label` claros (`aria-label="andamento: semicolcheia igual a 80"`).
+    - Para exercícios rítmicos, ofereça controle visual e sonoro (metronomo) com opção de silenciar e de reduzir animação para usuários sensíveis a movimento.
+
+4. Notação e legibilidade:
+    - Evite animacões rápidas sobre a pauta; use transições lentas e respeite `prefers-reduced-motion`.
+    - Quando destacar uma nota na pauta e no teclado simultaneamente, sincronize foco e `aria-live` para leitores de tela.
+    - Forneça contraste suficiente entre pontos de nota e linhas da pauta (sugestão: `note-dot` com contorno escuro leve quando o fundo for claro, e o contrário no modo escuro).
+
+5. Boas práticas de implementação:
+    - Não renomeie classes essenciais do layout (`wrap`, `hero`, `grid`, `card`, `section`, `btn`, `nav`, `tag`, `stack`, `flow`).
+    - Ao adicionar ícones musicais decorativos (𝄞, ♪, ♫), use `pointer-events: none` em pseudo-elementos e opacidade baixa.
+    - Documente qualquer nova classe no `relatorio.html` e no `README.md` para facilitar manutenção.
+
+Seguindo essas regras, o app mantém clareza pedagógica e compatibilidade visual com o hub de produtos musicais.
 
 ## Arquivos Principais
 
@@ -31,6 +82,25 @@ Piano_e_Teclado/
 `-- icons/
     `-- icon.svg            # Icone do app
 ```
+
+## Estrutura Da Interface
+
+### index.html
+
+- guia rapido de uso;
+- barra de controles;
+- teclado interativo;
+- painel de nota selecionada;
+- modos de estudo;
+- pratica curta.
+
+### relatorio.html
+
+- visao geral do mapa;
+- abas tematicas sobre conteudo, fluxo, modos e acessibilidade;
+- demonstracao de pauta desenhada;
+- explicacao do audio, dados e PWA;
+- proximos passos do projeto.
 
 ## Como Rodar Localmente
 
@@ -46,6 +116,16 @@ Depois acesse:
 ```text
 http://127.0.0.1:8000/
 ```
+
+## Como Validar O Layout
+
+Depois de alterar o visual, confira:
+
+1. Abra `index.html` e `relatorio.html` no navegador.
+2. Teste a pagina em tela larga e em largura reduzida.
+3. Clique em `Modo escuro` nas duas paginas.
+4. Verifique se o teclado, as abas e a pauta continuam legiveis.
+5. Confirme que o fundo nao atrapalha o texto nem os controles.
 
 ## Como Publicar No GitHub Pages
 
@@ -68,6 +148,10 @@ git push -u origin main
 ```
 
 Troque `SEU-USUARIO` pelo seu usuario do GitHub.
+
+## Observacao Sobre O Link Publicado
+
+Se a pagina principal estiver publicada em GitHub Pages, a versao atualizada deve ser acessada pela URL do repositorio, mantendo o arquivo `index.html` como entrada principal do site.
 
 ## Funcionalidades Do Index
 
@@ -195,7 +279,7 @@ Timbres:
 
 ## Relatorio Interativo
 
-O `relatorio.html` funciona como documentacao navegavel do produto.
+O `relatorio.html` funciona como documentacao navegavel do produto e segue a mesma identidade visual da pagina principal.
 
 Abas atuais:
 

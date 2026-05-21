@@ -13,26 +13,38 @@
       --bg: #f7fcfd;
       --bg-2: #e5f5f9;
       --surface: rgba(255, 255, 255, 0.94);
-      --surface-2: rgba(230, 247, 244, 0.8);
-      --surface-3: rgba(217, 243, 238, 0.7);
+      --surface-2: rgba(230, 247, 244, 0.82);
+      --surface-3: rgba(217, 243, 238, 0.72);
       --ink: #172033;
       --muted: #4f6570;
       --line: rgba(38, 87, 78, 0.16);
       --accent: #2ca25f;
+      --accent-2: #41ae76;
+      --accent-3: #99d8c9;
+      --color-theory: #6366f1;
+      --color-score: #ec4899;
+      --color-keyboard: #f59e0b;
+      --color-instrument: #8b5cf6;
       --shadow: 0 18px 48px rgba(19, 75, 58, 0.12);
       color-scheme: light;
     }
 
     html[data-theme="dark"] {
-      --bg: #0f1f1a;
-      --bg-2: #173329;
-      --surface: rgba(22, 44, 37, 0.95);
-      --surface-2: rgba(31, 63, 53, 0.82);
-      --surface-3: rgba(28, 57, 47, 0.7);
-      --ink: #effaf6;
-      --muted: #bedaca;
-      --line: rgba(177, 224, 208, 0.2);
-      --accent: #66c2a4;
+      --bg: #0a1318;
+      --bg-2: #0f1f2a;
+      --surface: rgba(15, 32, 46, 0.98);
+      --surface-2: rgba(22, 51, 70, 0.95);
+      --surface-3: rgba(24, 44, 60, 0.84);
+      --ink: #f0f9fc;
+      --muted: #a8d8e1;
+      --line: rgba(177, 224, 208, 0.35);
+      --accent: #4ade80;
+      --accent-2: #22c55e;
+      --accent-3: #16a34a;
+      --color-theory: #818cf8;
+      --color-score: #f472b6;
+      --color-keyboard: #fbbf24;
+      --color-instrument: #a78bfa;
       --shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
       color-scheme: dark;
     }
@@ -42,29 +54,81 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: linear-gradient(180deg, var(--bg), var(--bg-2));
+      position: relative;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 12% 14%, rgba(99, 102, 241, 0.12), transparent 28%),
+        radial-gradient(circle at 86% 16%, rgba(236, 72, 153, 0.10), transparent 30%),
+        radial-gradient(circle at 78% 72%, rgba(245, 158, 11, 0.10), transparent 32%),
+        radial-gradient(circle at 18% 84%, rgba(44, 162, 95, 0.12), transparent 30%),
+        linear-gradient(135deg, var(--bg), #eef8fb, #fdf4fb, #fff7ee, #effcf4, var(--bg-2));
+      background-size: 120% 120%, 120% 120%, 120% 120%, 120% 120%, 360% 360%;
+      animation: rainbowDrift 22s ease-in-out infinite;
       color: var(--ink);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       line-height: 1.6;
     }
 
+    body::before,
+    body::after {
+      content: "𝄞  ♫  ♪  ♬  ♯  ♭  ♮";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      display: grid;
+      align-items: start;
+      justify-items: start;
+      padding: 2.2rem 1.2rem;
+      color: color-mix(in srgb, var(--accent) 42%, transparent);
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      letter-spacing: 0.4rem;
+      line-height: 1.35;
+      opacity: 0.10;
+      white-space: pre-wrap;
+      transform: rotate(-6deg);
+    }
+
+    body::after {
+      content: "♪  ♮  ♫  𝄞  ♭  ♬  ♯  𝅘𝅥";
+      align-items: end;
+      justify-items: end;
+      padding: 2rem 1.4rem;
+      transform: rotate(8deg);
+      color: color-mix(in srgb, var(--accent-2) 42%, transparent);
+    }
+
     header, main {
-      width: min(960px, calc(100% - 28px));
+      width: min(1120px, calc(100% - 32px));
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
     header {
-      padding: 22px 0 12px;
+      margin-top: 12px;
+      padding: 18px 18px 14px;
       display: flex;
       justify-content: space-between;
       gap: 12px;
       align-items: center;
       flex-wrap: wrap;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--surface) 92%, #6366f1), color-mix(in srgb, var(--surface) 90%, #ec4899), color-mix(in srgb, var(--surface) 92%, #2ca25f));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
     }
 
     h1 {
       margin: 0;
       font-size: clamp(1.5rem, 3vw, 2.3rem);
+      background: linear-gradient(135deg, #6366f1, #ec4899, #f59e0b, #8b5cf6, #2ca25f);
+      background-size: 200% 200%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     p { color: var(--muted); }
@@ -92,25 +156,57 @@
       justify-content: center;
       min-height: 40px;
       cursor: pointer;
+      text-decoration: none;
+      box-shadow: none;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(44, 162, 95, 0.12);
     }
 
     main {
-      padding: 10px 0 40px;
+      padding: 14px 0 40px;
       display: grid;
-      gap: 14px;
+      gap: 16px;
     }
 
     section {
       border: 1px solid var(--line);
-      background: var(--surface);
+      background:
+        linear-gradient(
+          135deg,
+          color-mix(in srgb, var(--surface) 92%, #6366f1),
+          color-mix(in srgb, var(--surface) 90%, #ec4899),
+          color-mix(in srgb, var(--surface) 91%, #f59e0b),
+          color-mix(in srgb, var(--surface) 92%, #2ca25f),
+          color-mix(in srgb, var(--surface) 91%, #8b5cf6)
+        );
+      background-size: 280% 280%;
+      animation: panelRainbowDrift 20s ease-in-out infinite;
       border-radius: 18px;
       padding: 18px;
       box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
     }
 
     h2 {
       margin: 0 0 8px;
-      font-size: 1.08rem;
+      font-size: 1.1rem;
+      position: relative;
+      padding-left: 14px;
+    }
+
+    h2::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--accent), var(--color-keyboard));
     }
 
     ul {
@@ -125,9 +221,11 @@
       border: 1px solid var(--line);
       border-radius: 999px;
       padding: 3px 9px;
-      color: var(--muted);
+      color: #ffffff;
       font-size: 0.82rem;
       margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 8px 18px rgba(44, 162, 95, 0.18);
     }
 
     .tabs {
@@ -145,12 +243,19 @@
       padding: 8px 12px;
       cursor: pointer;
       font: inherit;
+      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .tab:hover {
+      transform: translateY(-1px);
+      background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+      box-shadow: 0 8px 18px rgba(44, 162, 95, 0.12);
     }
 
     .tab.active {
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       border-color: transparent;
-      color: #06281a;
+      color: #ffffff;
     }
 
     .tab-panel {
@@ -182,8 +287,13 @@
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 12px;
-      background: var(--surface-2);
+      background: linear-gradient(180deg, var(--surface-2), color-mix(in srgb, var(--surface-2) 76%, white));
     }
+
+    .mini-card:nth-child(1) { box-shadow: inset 0 3px 0 var(--color-theory); }
+    .mini-card:nth-child(2) { box-shadow: inset 0 3px 0 var(--color-score); }
+    .mini-card:nth-child(3) { box-shadow: inset 0 3px 0 var(--color-keyboard); }
+    .mini-card:nth-child(4) { box-shadow: inset 0 3px 0 var(--color-instrument); }
 
     .mini-card strong {
       display: block;
@@ -210,9 +320,9 @@
     }
 
     .subtab.active {
-      background: rgba(44, 162, 95, 0.14);
-      border-color: var(--accent);
-      color: var(--accent);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-color: transparent;
+      color: #ffffff;
     }
 
     .staff-detail {
@@ -323,7 +433,7 @@
 
     .score-card {
       border: 1px solid var(--line);
-      background: var(--surface-2);
+      background: linear-gradient(180deg, var(--surface-2), color-mix(in srgb, var(--surface-2) 76%, white));
       border-radius: 14px;
       padding: 12px;
       overflow: hidden;
@@ -368,8 +478,65 @@
       font: 800 18px Inter, system-ui, sans-serif;
     }
 
-    @media (max-width: 720px) {
-      .tab-grid, .subtabs, .staff-demo, .sound-controls { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      .tab-grid, .subtabs, .staff-demo, .sound-controls {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      header {
+        padding: 16px 14px 12px;
+      }
+
+      h1 {
+        font-size: 1.55rem;
+      }
+
+      section {
+        padding: 16px;
+      }
+
+      .tabs {
+        gap: 7px;
+      }
+
+      .tab {
+        padding: 8px 10px;
+      }
+    }
+
+    @keyframes rainbowDrift {
+      0%, 100% {
+        background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 50%;
+      }
+
+      50% {
+        background-position: 8% 6%, 92% 10%, 86% 88%, 12% 92%, 100% 50%;
+      }
+    }
+
+    @keyframes panelRainbowDrift {
+      0%, 100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>
@@ -377,7 +544,7 @@
   <header>
     <div>
       <h1>Relatório do Mapa Base do Piano e Teclado</h1>
-      <p>Versão irmã do mapa do trombone, adaptada para teclado visual, leitura e padrões de mão.</p>
+      <p>Visão técnica e navegável do mapa do piano, organizada para estudo, leitura e demonstração do fluxo do app.</p>
     </div>
     <nav class="nav" aria-label="Navegação">
       <a class="button" href="index.html">Abrir mapa</a>
@@ -387,18 +554,18 @@
 
   <main>
     <section>
-      <span class="tag">ideia central</span>
+      <span class="tag">visão geral</span>
       <h2>Mapa visual de teclas</h2>
       <p>
-        No piano, a referência principal não é uma posição de vara, mas a relação entre tecla, nota, grau da escala,
-        dedo e mão. Por isso a tela principal usa um teclado interativo de duas ou três oitavas.
+        No piano, a referência principal é a relação entre tecla, nota, grau da escala, dedo e mão. Por isso a tela
+        principal usa um teclado interativo de duas ou três oitavas.
       </p>
       <p>
-        O fluxo de uso é simples: escolher uma tonalidade, observar quais teclas pertencem à escala, clicar em uma nota
-        para entender sua função e fechar com uma prática curta de leitura, acorde ou campo harmônico.
+        O fluxo de uso é direto: escolher uma tonalidade, observar as teclas da escala, clicar em uma nota para entender
+        sua função e fechar com uma prática curta de leitura, acorde ou campo harmônico.
       </p>
       <p>
-        Abaixo, cada parte da apresentação fica em uma aba própria. Clique em uma aba para ver apenas aquele assunto.
+        Abaixo, cada parte da apresentação fica em uma aba própria para manter a leitura rápida e organizada.
       </p>
 
       <div class="tabs" role="tablist" aria-label="Apresentação do produto">
@@ -604,6 +771,8 @@
             <li>Serve para melodias, escalas na mão direita e leitura inicial no registro médio.</li>
             <li>Permite destacar a nota na pauta enquanto a tecla correspondente aparece no teclado.</li>
           </ul>
+          <h4>Tempo e notação</h4>
+          <p>O relatório mostra marcações de andamento e compasso como apoio visual: por exemplo, `♩ = 80` e `4/4`. Essas marcações devem usar `aria-label` e ter opção de ativar/desativar o metronomo no exemplo interativo. Evite animações rápidas na pauta e garanta contraste suficiente para leitura no modo claro e escuro.</p>
         </div>
       </div>
 
