@@ -1,4 +1,4 @@
-const CACHE_NAME = 'piano-map-v18';
+const CACHE_NAME = 'piano-map-v19';
 const APP_SHELL = [
   './',
   './index.html',
